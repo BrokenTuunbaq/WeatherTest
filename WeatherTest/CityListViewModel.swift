@@ -39,22 +39,14 @@ class CityListViewModel: NSObject, CLLocationManagerDelegate {
                 print(error)
                 return
             }
-            guard var weather = weather else {
+            guard let weather = weather else {
                 return
             }
-            if self.isDataWeatherDeleted == false {
-                CoreDataHelper().deleteDataWeather()
-                self.citiesWeathers = [WeatherResponse]()
-                self.isDataWeatherDeleted = true
-            }
-            weather.formalName = cityName
-            CoreDataHelper().storeData(weatherResponse: weather)
-            self.citiesWeathers.append(weather)
-            self.delegate?.receivedCitiesWeathers(citiesWeathers: self.citiesWeathers)
+            self.requestWeatherLogic(weather: weather, cityName: cityName)
         })
     }
     
-    func requestLocationWeather(lat: String?, lon: String?) {
+    func requestLocationWeather(lat: String?, lon: String?, cityName: String) {
         guard let lat = lat else {
             return
         }
@@ -66,25 +58,30 @@ class CityListViewModel: NSObject, CLLocationManagerDelegate {
                 print(error)
                 return
             }
-            guard var weather = weather else {
+            guard let weather = weather else {
                 return
             }
-            if self.isDataWeatherDeleted == false {
-                CoreDataHelper().deleteDataWeather()
-                self.citiesWeathers = [WeatherResponse]()
-                self.isDataWeatherDeleted = true
-            }
-            weather.formalName = StringConstant.CURRENT_LOCATION
-            CoreDataHelper().storeData(weatherResponse: weather)
-            self.citiesWeathers.append(weather)
-            self.delegate?.receivedCitiesWeathers(citiesWeathers: self.citiesWeathers)
+            self.requestWeatherLogic(weather: weather, cityName: cityName)
         })
+    }
+    
+    func requestWeatherLogic(weather: WeatherResponse, cityName: String) {
+        var weatherValue = weather
+        if isDataWeatherDeleted == false {
+            CoreDataHelper().deleteDataWeather()
+            citiesWeathers = [WeatherResponse]()
+            isDataWeatherDeleted = true
+        }
+        weatherValue.formalName = cityName
+        CoreDataHelper().storeData(weatherResponse: weatherValue)
+        citiesWeathers.append(weatherValue)
+        delegate?.receivedCitiesWeathers(citiesWeathers: citiesWeathers)
     }
     
     func requestCitiesWeathers() {
         for city in CityList.cityList {
             if city == StringConstant.CURRENT_LOCATION {
-                requestLocationWeather(lat: locationManager.location?.coordinate.latitude.description, lon: locationManager.location?.coordinate.longitude.description)
+                requestLocationWeather(lat: locationManager.location?.coordinate.latitude.description, lon: locationManager.location?.coordinate.longitude.description, cityName: city)
             } else {
                 requestCityWeather(cityName: city)
             }
