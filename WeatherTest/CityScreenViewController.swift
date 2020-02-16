@@ -22,10 +22,10 @@ class CityScreenViewController: UIViewController, UITableViewDelegate, UITableVi
         guard let weatherSelected = weatherSelected else { return }
         
         initCityWeather(weather: weatherSelected)
-        forecast = CoreDataHelper().retrieveDataForecast(cityName: weatherSelected.getName()!)
+        forecast = CoreDataHelper().retrieveDataForecast(cityName: weatherSelected.getFormalName()!)
         forecastTable.reloadData()
         
-        requestForecast(cityName: cityNameSelected)
+        requestForecast(cityName: cityNameSelected, formalName: weatherSelected.getFormalName()!)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -41,18 +41,19 @@ class CityScreenViewController: UIViewController, UITableViewDelegate, UITableVi
         return cell
     }
     
-    func requestForecast(cityName: String) {
+    func requestForecast(cityName: String, formalName: String) {
         networkManager.forecastByCity(cityName: cityName, days: StringConstant.DAYS_CONST, completion: {
             (forecast, error) in
             if let error = error {
                 print(error)
                 return
             }
-            guard let forecast = forecast else {
+            guard var forecast = forecast else {
                 return
             }
+            forecast.city?.formalName = formalName
             self.forecast = forecast
-            CoreDataHelper().deleteDataForecast(cityName: cityName)
+            CoreDataHelper().deleteDataForecast(cityName: formalName)
             CoreDataHelper().storeData(forecast: forecast)
             DispatchQueue.main.async {
                 self.forecastTable.reloadData()

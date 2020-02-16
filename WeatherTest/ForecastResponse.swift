@@ -8,6 +8,7 @@ struct ForecastResponse: Codable {
     
     init(forecastStored: [ForecastStore]) {
         city?.name = forecastStored[0].name
+        city?.formalName = forecastStored[0].formalName
         list = [List]()
         for stored in forecastStored {
             list?.append(List(temp: stored.temp, feels: stored.feelsLike, weatherDesc: stored.weatherDesc, weatherTime: stored.time))
@@ -18,6 +19,7 @@ struct ForecastResponse: Codable {
 struct City: Codable {
     var id: Int?
     var name: String?
+    var formalName: String?
     var coord: Coord?
     var country: String?
     var population, timezone, sunrise, sunset: Int?

@@ -14,6 +14,7 @@ class CoreDataHelper {
         weatherManagedObj.setValue(weatherResponse.getTemp(), forKey: "temperature")
         weatherManagedObj.setValue(weatherResponse.getFeelsLike(), forKey: "feelsLike")
         weatherManagedObj.setValue(weatherResponse.getWeatherDesc(), forKey: "weatherDesc")
+        weatherManagedObj.setValue(weatherResponse.getFormalName(), forKey: "formalName")
         do {
             try managedContext.save()
         }
@@ -27,12 +28,14 @@ class CoreDataHelper {
         let managedContext = appDelegate.persistentContainer.viewContext
         let forecastEntity = NSEntityDescription.entity(forEntityName: "Forecast", in: managedContext)
         
+        let formalName = forecast.city?.formalName
         let cityName = forecast.city?.name
         let forecastList = forecast.list!
         
         for forecastObject in forecastList {
             let forecastManagedObj = NSManagedObject(entity: forecastEntity!, insertInto: managedContext)
             forecastManagedObj.setValue(cityName, forKey: "name")
+            forecastManagedObj.setValue(formalName, forKey: "formalName")
             forecastManagedObj.setValue(forecastObject.main?.temp, forKey: "temperature")
             forecastManagedObj.setValue(forecastObject.main?.feelsLike, forKey: "feelsLike")
             forecastManagedObj.setValue(forecastObject.weather?[0].weatherDescription, forKey: "weatherDesc")
@@ -54,8 +57,7 @@ class CoreDataHelper {
         do {
             let result = try managedContext.fetch(fetchRequest)
             for data in result as! [NSManagedObject] {
-                //cityWeathers.append(data as! WeatherResponse)
-                cityWeathers.append(WeatherResponse(name: data.value(forKey: "name") as? String, temp: data.value(forKey: "temperature") as? Double, feelsLike: data.value(forKey: "feelsLike") as? Double, weatherDesc: data.value(forKey: "weatherDesc") as? String))
+                cityWeathers.append(WeatherResponse(name: data.value(forKey: "name") as? String, formalName: data.value(forKey: "formalName") as? String, temp: data.value(forKey: "temperature") as? Double, feelsLike: data.value(forKey: "feelsLike") as? Double, weatherDesc: data.value(forKey: "weatherDesc") as? String))
             }
         } catch {
             print("No data retrieved from CoreData")
@@ -70,11 +72,11 @@ class CoreDataHelper {
         
         var forecastStoreArray = [ForecastStore]()
         
-        fetchRequest.predicate = NSPredicate(format: "name = %@", cityName)
+        fetchRequest.predicate = NSPredicate(format: "formalName = %@", cityName)
         do {
             let result = try managedContext.fetch(fetchRequest)
             for data in result as! [NSManagedObject] {
-                forecastStoreArray.append(ForecastStore(name: data.value(forKey: "name") as? String, temp: data.value(forKey: "temperature") as? Double, feelsLike: data.value(forKey: "feelsLike") as? Double, weatherDesc: data.value(forKey: "weatherDesc") as? String, time: data.value(forKey: "weatherTime") as? String))
+                forecastStoreArray.append(ForecastStore(name: data.value(forKey: "name") as? String, temp: data.value(forKey: "temperature") as? Double, feelsLike: data.value(forKey: "feelsLike") as? Double, weatherDesc: data.value(forKey: "weatherDesc") as? String, time: data.value(forKey: "weatherTime") as? String, formalName: data.value(forKey: "formalName") as? String))
             }
             return ForecastResponse(forecastStored: forecastStoreArray.sorted(by: { $0.time! < $1.time! }))
         } catch {
@@ -107,7 +109,7 @@ class CoreDataHelper {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Forecast")
-        fetchRequest.predicate = NSPredicate(format: "name = %@", cityName)
+        fetchRequest.predicate = NSPredicate(format: "formalName = %@", cityName)
         do {
             let result = try managedContext.fetch(fetchRequest)
             for data in result as! [NSManagedObject] {

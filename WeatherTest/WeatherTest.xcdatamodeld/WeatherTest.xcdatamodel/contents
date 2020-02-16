@@ -2,19 +2,21 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19D76" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CityWeather" representedClassName="CityWeather" syncable="YES" codeGenerationType="class">
         <attribute name="feelsLike" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="formalName" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="temperature" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="weatherDesc" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Forecast" representedClassName="Forecast" syncable="YES" codeGenerationType="class">
         <attribute name="feelsLike" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="formalName" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="temperature" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="weatherDesc" optional="YES" attributeType="String"/>
         <attribute name="weatherTime" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="CityWeather" positionX="-63" positionY="-18" width="128" height="103"/>
-        <element name="Forecast" positionX="-54" positionY="18" width="128" height="118"/>
+        <element name="CityWeather" positionX="-63" positionY="-18" width="128" height="118"/>
+        <element name="Forecast" positionX="-54" positionY="18" width="128" height="133"/>
     </elements>
 </model>

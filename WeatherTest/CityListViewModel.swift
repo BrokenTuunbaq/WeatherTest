@@ -26,10 +26,7 @@ class CityListViewModel: NSObject, CLLocationManagerDelegate {
         if citiesWeathers.count > 0 {
             delegate?.receivedCitiesWeathers(citiesWeathers: citiesWeathers)
         }
-        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
-            CLLocationManager.authorizationStatus() == .authorizedAlways {
-            requestWeathersIfLocationEnabled()
-        }
+        requestWeathersIfLocationEnabled()
     }
         
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -42,7 +39,7 @@ class CityListViewModel: NSObject, CLLocationManagerDelegate {
                 print(error)
                 return
             }
-            guard let weather = weather else {
+            guard var weather = weather else {
                 return
             }
             if self.isDataWeatherDeleted == false {
@@ -50,6 +47,7 @@ class CityListViewModel: NSObject, CLLocationManagerDelegate {
                 self.citiesWeathers = [WeatherResponse]()
                 self.isDataWeatherDeleted = true
             }
+            weather.formalName = cityName
             CoreDataHelper().storeData(weatherResponse: weather)
             self.citiesWeathers.append(weather)
             self.delegate?.receivedCitiesWeathers(citiesWeathers: self.citiesWeathers)
@@ -68,7 +66,7 @@ class CityListViewModel: NSObject, CLLocationManagerDelegate {
                 print(error)
                 return
             }
-            guard let weather = weather else {
+            guard var weather = weather else {
                 return
             }
             if self.isDataWeatherDeleted == false {
@@ -76,6 +74,7 @@ class CityListViewModel: NSObject, CLLocationManagerDelegate {
                 self.citiesWeathers = [WeatherResponse]()
                 self.isDataWeatherDeleted = true
             }
+            weather.formalName = StringConstant.CURRENT_LOCATION
             CoreDataHelper().storeData(weatherResponse: weather)
             self.citiesWeathers.append(weather)
             self.delegate?.receivedCitiesWeathers(citiesWeathers: self.citiesWeathers)
@@ -93,7 +92,7 @@ class CityListViewModel: NSObject, CLLocationManagerDelegate {
     }
     
     func requestWeathersIfLocationEnabled() {
-        if isLocationStatusEnabled == true {
+        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse && isLocationStatusEnabled == true {
             requestCitiesWeathers()
             isLocationStatusEnabled = false
         }

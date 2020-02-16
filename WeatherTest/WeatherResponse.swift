@@ -12,10 +12,12 @@ struct WeatherResponse: Codable {
     var sys: Sys?
     var timezone, id: Int?
     var name: String?
+    var formalName: String?
     var cod: Int?
     
-    init(name: String?, temp: Double?, feelsLike: Double?, weatherDesc: String?) {
+    init(name: String?, formalName: String?, temp: Double?, feelsLike: Double?, weatherDesc: String?) {
         self.name = name
+        self.formalName = formalName
         self.main = Main(temp: temp, feelsLike: feelsLike)
         self.weather = [Weather]()
         self.weather?.append(Weather(weatherDesc: weatherDesc))
@@ -32,6 +34,9 @@ struct WeatherResponse: Codable {
     }
     func getWeatherDesc() -> String? {
         return weather?[0].weatherDescription
+    }
+    func getFormalName() -> String? {
+        return formalName
     }
 }
 
@@ -90,6 +95,7 @@ struct CityWeatherStore {
     var temp: Double?
     var feelsLike: Double?
     var weatherDesc: String?
+    var formalName: String?
 }
 
 struct ForecastStore {
@@ -98,12 +104,15 @@ struct ForecastStore {
     var feelsLike: Double?
     var weatherDesc: String?
     var time: String?
+    var formalName: String?
     
-    init(name: String?, temp: Double?, feelsLike: Double?, weatherDesc: String?, time: String?) {
+    init(name: String?, temp: Double?, feelsLike: Double?, weatherDesc: String?, time: String?, formalName: String?) {
         self.name = name
         self.temp = temp
         self.feelsLike = feelsLike
         self.weatherDesc = weatherDesc
         self.time = time
+        self.formalName = formalName
+
     }
 }
